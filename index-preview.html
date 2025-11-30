@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Captain Culinary - Preview</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #1F1F1F;
+            color: #FEFEFE;
+            min-height: 100vh;
+            position: relative;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)),
+                        radial-gradient(circle at 50% 50%, #333 0%, #1a1a1a 100%);
+            z-index: -1;
+        }
+        
+        nav {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .brand-icon {
+            width: 56px; height: 56px;
+            background: #D4AF37;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+        
+        main {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+        
+        .subtitle {
+            font-size: 1.75rem;
+            color: #D4AF37;
+            margin-bottom: 2rem;
+            text-shadow: 0 2px 15px rgba(212,175,55,0.4);
+        }
+        
+        .description {
+            font-size: 1.125rem;
+            color: rgba(255,255,255,0.75);
+            margin-bottom: 3rem;
+            line-height: 1.8;
+        }
+        
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 24px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .card:hover {
+            transform: translateY(-8px);
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(212, 175, 55, 0.4);
+            box-shadow: 0 16px 48px rgba(212, 175, 55, 0.3);
+        }
+        
+        .icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .card h3 {
+            font-size: 1.75rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .label {
+            display: inline-block;
+            background: rgba(212, 175, 55, 0.2);
+            color: #D4AF37;
+            padding: 0.35rem 1rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+        }
+        
+        .card p {
+            color: rgba(255, 255, 255, 0.75);
+            line-height: 1.7;
+        }
+        
+        .footer {
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .quote {
+            font-size: 1.75rem;
+            font-style: italic;
+            margin-bottom: 0.5rem;
+        }
+        
+        .signature {
+            color: #D4AF37;
+            font-weight: 600;
+        }
+        
+        .notice {
+            background: rgba(212, 175, 55, 0.15);
+            border: 2px solid #D4AF37;
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .notice h4 {
+            color: #D4AF37;
+            margin-bottom: 0.5rem;
+        }
+        
+        code {
+            background: rgba(0,0,0,0.3);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="brand">
+            <div class="brand-icon">⚓</div>
+            <span>Captain Culinary</span>
+        </div>
+    </nav>
+    
+    <main>
+        <div class="notice">
+            <h4>🎨 Glass Morphism Preview</h4>
+            <p>This preview shows the visual design. Download the files and run <code>npm install && npm run dev</code> for the full interactive app.</p>
+        </div>
+        
+        <h1>Captain Culinary</h1>
+        <div class="subtitle">America's First Live-In Digital Chef</div>
+        <p class="description">
+            Professional culinary education and interactive AI chef mentorship—right from your mobile device.
+        </p>
+        
+        <div class="cards">
+            <div class="card">
+                <div class="icon">🎓</div>
+                <h3>The Academy</h3>
+                <div class="label">FREE</div>
+                <p>20 professional culinary training modules taught by Chef Chris Moore</p>
+            </div>
+            
+            <div class="card">
+                <div class="icon">👨‍🍳</div>
+                <h3>The Galley</h3>
+                <div class="label">FREEMIUM</div>
+                <p>Cook ANY recipe with culturally authentic AI chef personas</p>
+            </div>
+            
+            <div class="card">
+                <div class="icon">🔧</div>
+                <h3>Pro Tools</h3>
+                <div class="label">PREMIUM</div>
+                <p>Restaurant management and business tools for professionals</p>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p class="quote">"Let's make something worth tasting."</p>
+            <p class="signature">— Captain Culinary</p>
+        </div>
+    </main>
+</body>
+</html>
