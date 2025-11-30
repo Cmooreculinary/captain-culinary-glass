@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Captain Culinary - America's First Live-In Digital Chef</title>
+    <meta name="description" content="Professional culinary education and interactive AI chef mentorship from your mobile device.">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚓</text></svg>">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --charcoal: #1F1F1F;
+            --gold: #D4AF37;
+            --gold-light: #E5C158;
+            --warm-copper: #B87333;
+            --white: #FEFEFE;
+            --glass-white: rgba(255, 255, 255, 0.1);
+            --glass-white-hover: rgba(255, 255, 255, 0.18);
+            --glass-dark: rgba(0, 0, 0, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.18);
+            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            --text-light: rgba(255, 255, 255, 0.95);
+            --text-medium: rgba(255, 255, 255, 0.75);
+            --text-soft: rgba(255, 255, 255, 0.55);
+            --border-radius: 16px;
+            --border-radius-lg: 24px;
+            --blur-amount: 20px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            min-height: 100vh;
+            overflow-x: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
+            color: var(--text-light);
+            background: var(--charcoal);
+        }
+
+        #app {
+            min-height: 100vh;
+            position: relative;
+        }
+
+        .bg-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
+        }
+
+        .bg-overlay::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(ellipse at 20% 80%, rgba(212, 175, 55, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(0, 163, 255, 0.1) 0%, transparent 50%);
+        }
+
+        nav {
+            background: var(--glass-white);
+            backdrop-filter: blur(var(--blur-amount));
+            -webkit-backdrop-filter: blur(var(--blur-amount));
+            border-bottom: 1px solid var(--glass-border);
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: var(--glass-shadow);
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-weight: 700;
+            font-size: 1.375rem;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .nav-brand:hover {
+            transform: translateY(-1px);
+        }
+
+        .brand-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--gold) 0%, var(--warm-copper) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .nav-link {
+            background: transparent;
+            border: none;
+            color: var(--text-medium);
+            padding: 0.75rem 1.25rem;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .nav-link:hover {
+            background: var(--glass-white);
+            color: var(--text-light);
+        }
+
+        .nav-link.active {
+            background: rgba(212, 175, 55, 0.2);
+            color: var(--gold);
+        }
+
+        main {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            min-height: calc(100vh - 80px);
+        }
+
+        .screen {
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .welcome {
+            text-align: center;
+            padding: 2rem 0;
+        }
+
+        .welcome h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+            letter-spacing: -1px;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            line-height: 1.1;
+        }
+
+        .welcome .subtitle {
+            font-size: 1.5rem;
+            color: var(--gold);
+            font-weight: 600;
+            text-shadow: 0 2px 15px rgba(212, 175, 55, 0.4);
+            margin-bottom: 1rem;
+        }
+
+        .welcome .description {
+            font-size: 1.125rem;
+            color: var(--text-medium);
+            margin-bottom: 3rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.7;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .card {
+            background: var(--glass-white);
+            backdrop-filter: blur(var(--blur-amount));
+            -webkit-backdrop-filter: blur(var(--blur-amount));
+            border-radius: var(--border-radius-lg);
+            padding: 2rem;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, transparent 100%);
+            opacity: 0;
+            transition: var(--transition);
+            z-index: 0;
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        .card:hover {
+            background: var(--glass-white-hover);
+            border-color: rgba(212, 175, 55, 0.4);
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 50px rgba(212, 175, 55, 0.25);
+        }
+
+        .card > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .card-icon {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            display: inline-block;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .card:hover .card-icon {
+            animation: none;
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .card h3 {
+            font-size: 1.5rem;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        .card-label {
+            display: inline-block;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--gold);
+            background: rgba(212, 175, 55, 0.2);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            margin-bottom: 1rem;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .card p {
+            color: var(--text-medium);
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        .quote-footer {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .quote-footer p {
+            font-size: 1.25rem;
+            font-style: italic;
+            color: var(--text-medium);
+            margin-bottom: 0.5rem;
+        }
+
+        .quote-footer .signature {
+            color: var(--gold);
+            font-weight: 600;
+        }
+
+        .chef-selection h2 {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-light);
+        }
+
+        .chef-selection .subtitle {
+            text-align: center;
+            color: var(--text-medium);
+            margin-bottom: 2rem;
+        }
+
+        .chef-pack {
+            background: var(--glass-white);
+            backdrop-filter: blur(var(--blur-amount));
+            border-radius: var(--border-radius-lg);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--glass-border);
+        }
+
+        .chef-pack h3 {
+            color: var(--gold);
+            font-size: 1.1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .chef-pack .pack-desc {
+            color: var(--text-soft);
+            font-size: 0.85rem;
+            margin-bottom: 1rem;
+        }
+
+        .chef-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 1rem;
+        }
+
+        .chef-card {
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(15px);
+            border-radius: var(--border-radius);
+            padding: 1.25rem;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .chef-card:hover {
+            background: rgba(0, 0, 0, 0.4);
+            border-color: var(--gold);
+            transform: translateY(-6px);
+            box-shadow: 0 15px 40px rgba(212, 175, 55, 0.3);
+        }
+
+        .chef-card:hover .chef-avatar {
+            transform: scale(1.15) rotate(-5deg);
+        }
+
+        .chef-avatar {
+            font-size: 2.5rem;
+            margin-bottom: 0.75rem;
+            display: block;
+            transition: var(--transition);
+        }
+
+        .chef-card h4 {
+            font-size: 1rem;
+            color: var(--text-light);
+            margin-bottom: 0.25rem;
+        }
+
+        .chef-card .chef-style {
+            font-size: 0.75rem;
+            color: var(--text-soft);
+        }
+
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 160px);
+            max-height: 700px;
+        }
+
+        .chat-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--glass-border);
+            margin-bottom: 1rem;
+        }
+
+        .chat-header .chef-avatar {
+            font-size: 2rem;
+            margin-bottom: 0;
+        }
+
+        .chat-header h3 {
+            font-size: 1.25rem;
+            color: var(--text-light);
+        }
+
+        .chat-header .back-btn {
+            margin-left: auto;
+            background: var(--glass-white);
+            border: 1px solid var(--glass-border);
+            color: var(--text-medium);
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.875rem;
+        }
+
+        .chat-header .back-btn:hover {
+            background: var(--glass-white-hover);
+            color: var(--text-light);
+        }
+
+        .messages-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: var(--border-radius);
+            margin-bottom: 1rem;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 1rem 1.25rem;
+            border-radius: var(--border-radius);
+            margin-bottom: 1rem;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.assistant {
+            background: var(--glass-white);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            margin-right: auto;
+        }
+
+        .message.user {
+            background: linear-gradient(135deg, var(--gold) 0%, var(--warm-copper) 100%);
+            color: #1a1a1a;
+            margin-left: auto;
+        }
+
+        .message p {
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        .welcome-message {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-medium);
+        }
+
+        .welcome-message h4 {
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+        }
+
+        .starter-prompts {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+
+        .starter-btn {
+            background: var(--glass-white);
+            border: 1px solid var(--glass-border);
+            color: var(--text-medium);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: var(--transition);
+        }
+
+        .starter-btn:hover {
+            background: var(--glass-white-hover);
+            color: var(--gold);
+            border-color: rgba(212, 175, 55, 0.4);
+        }
+
+        .chat-input-container {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .chat-input {
+            flex: 1;
+            background: var(--glass-white);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--border-radius);
+            padding: 1rem 1.25rem;
+            color: var(--text-light);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: var(--gold);
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
+        }
+
+        .chat-input::placeholder {
+            color: var(--text-soft);
+        }
+
+        .send-btn {
+            background: linear-gradient(135deg, var(--gold) 0%, var(--warm-copper) 100%);
+            border: none;
+            color: #1a1a1a;
+            padding: 1rem 1.5rem;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: var(--transition);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .send-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.4);
+        }
+
+        .coming-soon {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .coming-soon .icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .coming-soon h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--text-light);
+        }
+
+        .coming-soon p {
+            color: var(--text-medium);
+            max-width: 500px;
+            margin: 0 auto 2rem;
+            line-height: 1.7;
+        }
+
+        .waitlist-form {
+            display: flex;
+            gap: 0.75rem;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .waitlist-form input {
+            flex: 1;
+            background: var(--glass-white);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--border-radius);
+            padding: 0.875rem 1rem;
+            color: var(--text-light);
+            font-size: 1rem;
+        }
+
+        .waitlist-form input:focus {
+            outline: none;
+            border-color: var(--gold);
+        }
+
+        .waitlist-form input::placeholder {
+            color: var(--text-soft);
+        }
+
+        .waitlist-form button {
+            background: linear-gradient(135deg, var(--gold) 0%, var(--warm-copper) 100%);
+            border: none;
+            color: #1a1a1a;
+            padding: 0.875rem 1.5rem;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .waitlist-form button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            nav {
+                padding: 0.75rem 1rem;
+            }
+
+            .nav-brand {
+                font-size: 1rem;
+            }
+
+            .brand-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 1.25rem;
+            }
+
+            .nav-links {
+                gap: 0.25rem;
+            }
+
+            .nav-link {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.8rem;
+            }
+
+            main {
+                padding: 1rem;
+            }
+
+            .welcome h1 {
+                font-size: 2.25rem;
+            }
+
+            .welcome .subtitle {
+                font-size: 1.1rem;
+            }
+
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .chef-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .chat-container {
+                height: calc(100vh - 140px);
+            }
+
+            .message {
+                max-width: 90%;
+            }
+
+            .starter-prompts {
+                flex-direction: column;
+            }
+
+            .waitlist-form {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .welcome h1 {
+                font-size: 1.75rem;
+            }
+
+            .nav-link {
+                padding: 0.4rem 0.5rem;
+                font-size: 0.7rem;
+            }
+
+            .chef-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .chat-input-container {
+                flex-direction: column;
+            }
+
+            .send-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="bg-overlay"></div>
+        
+        <nav>
+            <div class="nav-brand" onclick="showScreen('welcome')">
+                <div class="brand-icon">⚓</div>
+                <span>Captain Culinary</span>
+            </div>
+            <div class="nav-links">
+                <button class="nav-link active" data-screen="welcome" onclick="showScreen('welcome')">Home</button>
+                <button class="nav-link" data-screen="academy" onclick="showScreen('academy')">Academy</button>
+                <button class="nav-link" data-screen="galley" onclick="showScreen('galley')">Galley</button>
+                <button class="nav-link" data-screen="tools" onclick="showScreen('tools')">Pro Tools</button>
+            </div>
+        </nav>
+
+        <main>
+            <div id="welcome" class="screen active">
+                <div class="welcome">
+                    <h1>Captain Culinary</h1>
+                    <div class="subtitle">America's First Live-In Digital Chef</div>
+                    <p class="description">
+                        Professional culinary education and interactive AI chef mentorship—right from your mobile device.
+                    </p>
+
+                    <div class="cards-grid">
+                        <div class="card" onclick="showScreen('academy')">
+                            <div class="card-icon">🎓</div>
+                            <h3>The Academy</h3>
+                            <span class="card-label">FREE</span>
+                            <p>20 professional culinary training modules taught by Chef Chris Moore with 60 years of experience.</p>
+                        </div>
+
+                        <div class="card" onclick="showScreen('galley')">
+                            <div class="card-icon">👨‍🍳</div>
+                            <h3>The Galley</h3>
+                            <span class="card-label">FREEMIUM</span>
+                            <p>Cook ANY recipe with 6 culturally authentic AI chef personas. Real-time guidance in your kitchen.</p>
+                        </div>
+
+                        <div class="card" onclick="showScreen('tools')">
+                            <div class="card-icon">🔧</div>
+                            <h3>Pro Tools</h3>
+                            <span class="card-label">PREMIUM</span>
+                            <p>Restaurant management, recipe costing, inventory tracking, and business analytics for professionals.</p>
+                        </div>
+                    </div>
+
+                    <div class="quote-footer">
+                        <p>"Let's make something worth tasting."</p>
+                        <span class="signature">— Captain Culinary</span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="academy" class="screen">
+                <div class="coming-soon">
+                    <div class="icon">🎓</div>
+                    <h2>The Academy</h2>
+                    <p>20 professional culinary training modules covering knife skills, sauces, proteins, pastry, and more. Taught by Chef Chris Moore.</p>
+                    <div class="waitlist-form">
+                        <input type="email" placeholder="Enter your email">
+                        <button onclick="joinWaitlist('academy')">Join Waitlist</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="galley" class="screen">
+                <div class="chef-selection">
+                    <h2>Choose Your Chef</h2>
+                    <p class="subtitle">Each chef brings unique expertise and teaching style</p>
+
+                    <div class="chef-pack">
+                        <h3>Pack 1: Culinary Masters</h3>
+                        <p class="pack-desc">Technical excellence and foundational mastery</p>
+                        <div class="chef-grid">
+                            <div class="chef-card" onclick="selectChef('garden')">
+                                <span class="chef-avatar">🌿</span>
+                                <h4>Garden Philosopher</h4>
+                                <p class="chef-style">Farm-to-table • Seasonal</p>
+                            </div>
+                            <div class="chef-card" onclick="selectChef('american')">
+                                <span class="chef-avatar">🦅</span>
+                                <h4>American Champion</h4>
+                                <p class="chef-style">Regional American • Heritage</p>
+                            </div>
+                            <div class="chef-card" onclick="selectChef('perfectionist')">
+                                <span class="chef-avatar">⭐</span>
+                                <h4>The Perfectionist</h4>
+                                <p class="chef-style">French Technique • Precision</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="chef-pack">
+                        <h3>Pack 2: Performance & Lifestyle</h3>
+                        <p class="pack-desc">Peak performance, knowledge, and adventure</p>
+                        <div class="chef-grid">
+                            <div class="chef-card" onclick="selectChef('kelly')">
+                                <span class="chef-avatar">🏄</span>
+                                <h4>First Mate Kelly</h4>
+                                <p class="chef-style">Performance Nutrition • Clean</p>
+                            </div>
+                            <div class="chef-card" onclick="selectChef('scientist')">
+                                <span class="chef-avatar">🔬</span>
+                                <h4>The Scientist</h4>
+                                <p class="chef-style">Food Science • Equipment</p>
+                            </div>
+                            <div class="chef-card" onclick="selectChef('traveler')">
+                                <span class="chef-avatar">🌍</span>
+                                <h4>The Traveler</h4>
+                                <p class="chef-style">Global Cuisine • Culture</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="chat" class="screen">
+                <div class="chat-container">
+                    <div class="chat-header">
+                        <span class="chef-avatar" id="chat-chef-avatar">🌿</span>
+                        <h3 id="chat-chef-name">Garden Philosopher</h3>
+                        <button class="back-btn" onclick="showScreen('galley')">← Change Chef</button>
+                    </div>
+
+                    <div class="messages-container" id="messages">
+                        <div class="welcome-message">
+                            <h4>Welcome to The Galley</h4>
+                            <p>Share what you're making or ask for guidance!</p>
+                            <div class="starter-prompts">
+                                <button class="starter-btn" onclick="sendStarter('What should I make for dinner tonight?')">Dinner ideas</button>
+                                <button class="starter-btn" onclick="sendStarter('How do I properly season a cast iron pan?')">Kitchen tips</button>
+                                <button class="starter-btn" onclick="sendStarter('Teach me a basic sauce')">Learn a sauce</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="chat-input-container">
+                        <input type="text" class="chat-input" id="chat-input" placeholder="Ask your chef anything..." onkeypress="handleKeyPress(event)">
+                        <button class="send-btn" onclick="sendMessage()">Send</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tools" class="screen">
+                <div class="coming-soon">
+                    <div class="icon">🔧</div>
+                    <h2>Pro Tools</h2>
+                    <p>Recipe costing, menu engineering, inventory management, and kitchen operations tools for restaurant professionals.</p>
+                    <div class="waitlist-form">
+                        <input type="email" placeholder="Enter your email">
+                        <button onclick="joinWaitlist('tools')">Join Waitlist</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const chefs = {
+            garden: {
+                name: 'Garden Philosopher',
+                avatar: '🌿',
+                greeting: "Welcome to the garden. Let's cook with what nature has given us today. What ingredients are speaking to you?",
+                responses: [
+                    "The best dishes come from respecting the ingredient. Let it shine simply.",
+                    "Seasonal cooking isn't a restriction—it's liberation. What's fresh is what's best.",
+                    "Start with the farmers market. The ingredients will tell you what to cook.",
+                    "A ripe tomato needs nothing but salt and good olive oil.",
+                    "Cook with intention. Every ingredient deserves your attention."
+                ]
+            },
+            american: {
+                name: 'American Champion',
+                avatar: '🦅',
+                greeting: "Hey there, chef! Ready to celebrate American ingredients and regional traditions? What part of the country are we cooking from today?",
+                responses: [
+                    "Every region of America has incredible culinary traditions. Let's honor them.",
+                    "American cuisine is about abundance, generosity, and local pride.",
+                    "From New England clam chowder to Texas BBQ—America's a nation of great food.",
+                    "Know your producers. The best American cooking starts with the best American ingredients.",
+                    "Regional doesn't mean limited. It means rooted in something real."
+                ]
+            },
+            perfectionist: {
+                name: 'The Perfectionist',
+                avatar: '⭐',
+                greeting: "Good day. Excellence begins with preparation. Is your mise en place ready? Let's pursue perfection together.",
+                responses: [
+                    "Perfection is achieved not when there's nothing more to add, but nothing left to remove.",
+                    "Master the fundamentals. The French mother sauces are your foundation.",
+                    "Take your time. Rushed cooking is compromised cooking.",
+                    "Your mise en place is your meditation. Prepare with intention.",
+                    "Technique is freedom. Master it, and you can create anything."
+                ]
+            },
+            kelly: {
+                name: 'First Mate Kelly',
+                avatar: '🏄',
+                greeting: "What's up! Ready to fuel your body for peak performance? Clean ingredients, maximum energy. What are we building today?",
+                responses: [
+                    "Think of food as fuel. Premium ingredients, premium performance.",
+                    "Recovery starts in the kitchen. Protein, healthy fats, clean carbs.",
+                    "Hydration and nutrition go hand in hand. Let's optimize both.",
+                    "Your body is your vehicle. Feed it like a champion.",
+                    "Simple, clean, powerful. That's how we eat for performance."
+                ]
+            },
+            scientist: {
+                name: 'The Scientist',
+                avatar: '🔬',
+                greeting: "Excellent! Let's understand WHY things work in the kitchen. What culinary mystery shall we solve today?",
+                responses: [
+                    "Understanding the science makes you a better cook. The Maillard reaction is your friend.",
+                    "Temperature control is everything. Get yourself a good thermometer.",
+                    "Every technique has a reason. Once you understand why, you can improvise.",
+                    "Salt doesn't just add flavor—it transforms texture and draws out moisture.",
+                    "Cooking is chemistry you can eat. Let's experiment!"
+                ]
+            },
+            traveler: {
+                name: 'The Traveler',
+                avatar: '🌍',
+                greeting: "Food connects us all. Every dish tells a story of people, place, and tradition. Where shall we travel today through taste?",
+                responses: [
+                    "The best meals I've had were in someone's home, not a restaurant.",
+                    "Respect the culture when you cook its food. Understand the context.",
+                    "Travel through your kitchen. Every cuisine has something to teach us.",
+                    "Street food is honest food. It's where cultures speak most clearly.",
+                    "Don't just follow recipes—understand the story behind them."
+                ]
+            }
+        };
+
+        let currentChef = null;
+
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+            
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+                if (link.dataset.screen === screenId) {
+                    link.classList.add('active');
+                }
+            });
+
+            if (screenId === 'welcome') {
+                document.querySelector('.nav-link[data-screen="welcome"]').classList.add('active');
+            }
+        }
+
+        function selectChef(chefId) {
+            currentChef = chefs[chefId];
+            
+            document.getElementById('chat-chef-avatar').textContent = currentChef.avatar;
+            document.getElementById('chat-chef-name').textContent = currentChef.name;
+            
+            const messagesContainer = document.getElementById('messages');
+            messagesContainer.innerHTML = `
+                <div class="welcome-message">
+                    <h4>Cooking with ${currentChef.name}</h4>
+                    <p>${currentChef.greeting}</p>
+                    <div class="starter-prompts">
+                        <button class="starter-btn" onclick="sendStarter('What should I make for dinner tonight?')">Dinner ideas</button>
+                        <button class="starter-btn" onclick="sendStarter('How do I properly season a cast iron pan?')">Kitchen tips</button>
+                        <button class="starter-btn" onclick="sendStarter('Teach me a basic technique')">Learn something</button>
+                    </div>
+                </div>
+            `;
+            
+            showScreen('chat');
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            input.value = '';
+            addMessage(message, 'user');
+            
+            setTimeout(() => {
+                const response = currentChef.responses[Math.floor(Math.random() * currentChef.responses.length)];
+                addMessage(response, 'assistant');
+            }, 800 + Math.random() * 800);
+        }
+
+        function sendStarter(message) {
+            document.getElementById('chat-input').value = message;
+            sendMessage();
+        }
+
+        function addMessage(text, role) {
+            const messagesContainer = document.getElementById('messages');
+            
+            const welcomeMsg = messagesContainer.querySelector('.welcome-message');
+            if (welcomeMsg) welcomeMsg.remove();
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${role}`;
+            messageDiv.innerHTML = `<p>${text}</p>`;
+            
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        function joinWaitlist(type) {
+            const form = event.target.closest('.waitlist-form');
+            const email = form.querySelector('input').value;
+            
+            if (!email || !email.includes('@')) {
+                alert('Please enter a valid email address.');
+                return;
+            }
+            
+            alert(`Thanks for joining the ${type === 'academy' ? 'Academy' : 'Pro Tools'} waitlist! We'll be in touch soon.`);
+            form.querySelector('input').value = '';
+        }
+
+        console.log('⚓ Captain Culinary loaded successfully!');
+    </script>
+</body>
+</html>
